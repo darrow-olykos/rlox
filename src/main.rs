@@ -51,6 +51,9 @@ fn run_repl() -> Result<(), RloxError> {
         print!("> ");
         let mut buffer = String::new();
         stdin.read_line(&mut buffer)?;
+        if buffer == "exit" {
+            break Ok(());
+        }
         run(&buffer);
     }
 }
