@@ -1,5 +1,5 @@
 use assert_cmd::prelude::*;
-// use predicates::str::contains;
+use predicates::str::contains;
 use std::process::Command;
 
 #[test]
@@ -15,7 +15,7 @@ fn cli_too_many_args() {
 fn cli_one_arg() {
     Command::cargo_bin("rlox")
         .unwrap()
-        .args(&["./tests/test_scriptf.txt"])
+        .args(&["./tests/test_script.txt"])
         .assert()
-        .success();
+        .stdout(contains("print \"hello, world\";"));
 }
