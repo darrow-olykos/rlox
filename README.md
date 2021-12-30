@@ -1,2 +1,2 @@
-# rust-lox
-messing with language interpreter concepts using
+# rlox
+messing with language interpreter concepts using rust
