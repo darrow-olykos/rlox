@@ -40,7 +40,7 @@ fn run_file(file_path: &str) -> Result<(), RloxError> {
 }
 
 fn run(data: &str) -> Result<(), RloxError> {
-    println!("{}", data);
+    data.chars().for_each(|c|print!("{}", c));
     Ok(())
 }
 
