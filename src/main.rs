@@ -141,7 +141,8 @@ mod scanner {
             };
             match maybe_token_type {
                 Some(t) => Ok(self.add_token(t)),
-                None => Err(RloxSyntaxError { // TODO: instead of erroring here, build a list of these and keep scanning
+                None => Err(RloxSyntaxError {
+                    // TODO: instead of erroring here, build a list of these and keep scanning
                     line_number: self.line,
                     location: "".to_string(),
                     description: "Unexpected character.".to_string(),
@@ -153,7 +154,7 @@ mod scanner {
             self.current += 1;
             self.source
                 .chars()
-                .nth(self.current.try_into().unwrap())
+                .nth(self.current.try_into().unwrap()) // TODO access via slice index instead?
                 .unwrap()
         }
 
@@ -187,6 +188,35 @@ mod scanner {
         impl Display for Token {
             fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
                 write!(f, "{:?} {}", self.token_type, self.lexeme)
+            }
+        }
+
+        impl Token {
+            fn new(c: char, char_index: u32, line_number: u32) -> Self {
+                // TODO
+                let start: usize = self.start.try_into().unwrap();
+                let current: usize = self.start.try_into().unwrap();
+                let text = &self.source[start..current].to_string();
+            
+                let Some(token_type) = match c {
+                    '(' => Some(TokenType::LeftParen),
+                    ')' => Some(TokenType::RightParen),
+                    '{' => Some(TokenType::LeftBrace),
+                    '}' => Some(TokenType::RightBrace),
+                    ',' => Some(TokenType::Comma),
+                    '.' => Some(TokenType::Dot),
+                    '-' => Some(TokenType::Minus),
+                    '+' => Some(TokenType::Plus),
+                    ';' => Some(TokenType::Semicolon),
+                    '*' => Some(TokenType::Star),
+                    _ => None,
+                };
+
+                Token { 
+                    token_type: token_type,
+                    lexeme: lexeme,
+                    line_number: line_number
+                }
             }
         }
 
