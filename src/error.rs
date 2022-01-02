@@ -9,7 +9,6 @@ pub enum RloxError {
 #[derive(Debug)]
 pub struct RloxSyntaxError {
     pub line_number: usize,
-    pub location: String,
     pub description: String,
 }
 
@@ -17,8 +16,8 @@ impl Display for RloxSyntaxError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(
             f,
-            "rlox syntax error: \nline_number: {}\n, location: {}\n, description: {}\n",
-            self.line_number, self.location, self.description
+            "rlox syntax error: \nline_number: {}\n, description: {}\n",
+            self.line_number, self.description
         )
     }
 }
