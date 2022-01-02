@@ -57,7 +57,7 @@ mod error {
 
     #[derive(Debug)]
     pub struct RloxSyntaxError {
-        pub line_number: u32,
+        pub line_number: usize,
         pub location: String,
         pub description: String,
     }
@@ -96,93 +96,67 @@ mod error {
 }
 
 mod scanner {
-    use std::convert::TryInto;
 
     use crate::{
-        error::RloxSyntaxError,
+        error::{RloxError, RloxSyntaxError},
         scanner::token::{Token, TokenType},
     };
     pub struct Scanner {
         source: String,
         tokens: Vec<Token>,
-        start: u32,
-        current: u32,
-        line: u32,
+        start: usize,
+        current: usize,
+        line: usize,
     }
 
     impl Scanner {
+        /*
+         * keep trying to scan tokens until end of file is reached,
+         * when eof is reached push eof token to the end of tokens collection,
+         * return collected tokens
+         */
         fn scan_tokens(&mut self) -> &Vec<Token> {
             while !self.is_at_end() {
                 self.start = self.current;
                 self.scan_token();
             }
-            self.tokens.push(Token {
-                token_type: TokenType::Eof,
-                lexeme: "".to_string(),
-                line_number: self.line,
-            });
+
+            self.tokens.push(Token::new_eof(self.line));
             &self.tokens
         }
 
-        fn scan_token(&mut self) -> Result<(), RloxSyntaxError> {
-            let c: char = self.advance();
-            let maybe_token_type = match c {
-                '(' => Some(TokenType::LeftParen),
-                ')' => Some(TokenType::RightParen),
-                '{' => Some(TokenType::LeftBrace),
-                '}' => Some(TokenType::RightBrace),
-                ',' => Some(TokenType::Comma),
-                '.' => Some(TokenType::Dot),
-                '-' => Some(TokenType::Minus),
-                '+' => Some(TokenType::Plus),
-                ';' => Some(TokenType::Semicolon),
-                '*' => Some(TokenType::Star),
-                _ => None,
-            };
-            match maybe_token_type {
-                Some(t) => Ok(self.add_token(t)),
-                None => Err(RloxSyntaxError {
-                    // TODO: instead of erroring here, build a list of these and keep scanning
-                    line_number: self.line,
-                    location: "".to_string(),
-                    description: "Unexpected character.".to_string(),
-                }),
-            }
+        /*
+         * .... !? TODO
+         */
+        fn scan_token(&mut self) -> Result<(), RloxError> {
+            let c: char = self.advance(); // this seems
+            let text = &self.source[self.start..self.current];
+            let token = Token::new(c, text.to_string(), self.line)?;
+            Ok(())
         }
 
         fn advance(&mut self) -> char {
             self.current += 1;
-            self.source
-                .chars()
-                .nth(self.current.try_into().unwrap()) // TODO access via slice index instead?
-                .unwrap()
-        }
-
-        fn add_token(&mut self, token_type: TokenType) {
-            let start: usize = self.start.try_into().unwrap();
-            let current: usize = self.start.try_into().unwrap();
-            let text = &self.source[start..current];
-            self.tokens.push(Token {
-                token_type: token_type,
-                lexeme: text.to_string(),
-                line_number: self.line,
-            })
+            let chars = self.source.chars().collect::<Vec<_>>();
+            *chars.get(self.current).unwrap()
         }
 
         fn is_at_end(&self) -> bool {
-            self.current >= self.source.chars().count().try_into().unwrap()
+            self.current >= self.source.chars().count()
         }
     }
 
     mod token {
         use std::fmt::{self, Display};
 
+        use crate::error::{RloxError, RloxSyntaxError};
+
         #[derive(Debug)]
         pub struct Token {
             pub token_type: TokenType,
             pub lexeme: String,
             //literal: there is no Object type in Rust <--- TODO: handle this
-            pub line_number: u32,
+            pub line_number: usize,
         }
 
         impl Display for Token {
@@ -192,13 +166,8 @@ mod scanner {
         }
 
         impl Token {
-            fn new(c: char, char_index: u32, line_number: u32) -> Self {
-                // TODO
-                let start: usize = self.start.try_into().unwrap();
-                let current: usize = self.start.try_into().unwrap();
-                let text = &self.source[start..current].to_string();
-            
-                let Some(token_type) = match c {
+            pub fn new(c: char, text: String, line_number: usize) -> Result<Self, RloxError> {
+                let maybe_token_type = match c {
                     '(' => Some(TokenType::LeftParen),
                     ')' => Some(TokenType::RightParen),
                     '{' => Some(TokenType::LeftBrace),
@@ -212,10 +181,26 @@ mod scanner {
                     _ => None,
                 };
 
-                Token { 
-                    token_type: token_type,
-                    lexeme: lexeme,
-                    line_number: line_number
+                match maybe_token_type {
+                    Some(t) => Ok(Token {
+                        token_type: t,
+                        lexeme: text.to_string(),
+                        line_number,
+                    }),
+                    None => {
+                        return Err(RloxError::SyntaxError(RloxSyntaxError {
+                            line_number,
+                            location: "".to_string(),
+                            description: "Unexpected character.".to_string(),
+                        }));
+                    }
+                }
+            }
+            pub fn new_eof(line_number: usize) -> Self {
+                Token {
+                    token_type: TokenType::Eof,
+                    lexeme: "".to_string(),
+                    line_number: line_number,
                 }
             }
         }
