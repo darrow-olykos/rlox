@@ -1,5 +1,5 @@
 use crate::error::{RloxError, RloxSyntaxError};
-use crate::token::{Token, TokenType};
+use crate::token::{Literal, Token, TokenType};
 
 pub struct Scanner {
     source: String,
@@ -83,11 +83,14 @@ impl Scanner {
                 self.line += 1;
                 Ok(())
             }
-            '"' => todo!(),
-            _ => Err(RloxError::SyntaxError(RloxSyntaxError {
-                line_number: self.line,
-                description: "Unexpected character.".to_string(),
-            })),
+            '"' => self.consume_string_literal(),
+            _ => match c.is_ascii_digit() {
+                true => self.consume_number_literal(),
+                false => Err(RloxError::SyntaxError(RloxSyntaxError {
+                    line_number: self.line,
+                    description: "Unexpected character.".to_string(),
+                })),
+            },
         }?;
         Ok(())
     }
@@ -118,7 +121,7 @@ impl Scanner {
     fn add_token(
         &mut self,
         token_type: TokenType,
-        literal: Option<String>,
+        literal: Option<Literal>,
     ) -> Result<(), RloxError> {
         let text = &self.source[self.start..self.current];
         self.tokens.push(Token::new(
@@ -143,7 +146,7 @@ impl Scanner {
         }
     }
 
-    fn consume_string(&mut self) -> Result<(), RloxError> {
+    fn consume_string_literal(&mut self) -> Result<(), RloxError> {
         while self.peek() != '"' && !self.is_at_end() {
             if self.peek() == '\n' {
                 self.line += 1;
@@ -158,8 +161,31 @@ impl Scanner {
         }
         self.advance();
         let value = &self.source[&self.start + 1..&self.current - 1];
-        self.add_token(TokenType::String, Some(value.to_string()))?;
+        self.add_token(TokenType::String, Some(Literal::String(value.to_string())))?;
         Ok(())
+    }
+
+    fn consume_number_literal(&mut self) -> Result<(), RloxError> {
+        while self.peek().is_ascii_digit() {
+            self.advance();
+        }
+        if self.peek() == '.' && self.peek_next().is_ascii_digit() {
+            self.advance();
+            while self.peek().is_ascii_digit() {
+                self.advance();
+            }
+        }
+        let value = &self.source[self.start..self.current]
+            .parse::<f32>()
+            .unwrap();
+        self.add_token(TokenType::Number, Some(Literal::Float(*value)))
+    }
+
+    fn peek_next(&self) -> char {
+        match self.current + 1 >= self.source.len() {
+            true => '\0',
+            false => self.source.chars().nth(self.current + 1).unwrap(),
+        }
     }
 }
 
