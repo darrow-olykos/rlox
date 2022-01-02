@@ -72,8 +72,15 @@ impl Scanner {
                 false => self.add_token(TokenType::Greater),
             },
             '/' => match self.advance_if_match('/') {
-                true => todo!(),
-                false => todo!(),
+                true => {
+                    while self.peek() != '\n' && !self.is_at_end() {
+                        self.advance();
+                    }
+                    Ok(())
+                },
+                false => {
+                    self.add_token(TokenType::Slash)
+                }
             },
             _ => Err(RloxError::SyntaxError(RloxSyntaxError {
                 line_number: self.line,
