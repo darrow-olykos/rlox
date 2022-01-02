@@ -168,7 +168,8 @@ impl Scanner {
         }
         self.advance();
         let value = &self.source[&self.start + 1..&self.current - 1];
-        self.add_token(TokenType::String, Some(Literal::String(value.to_string())))?;
+        let literal = Some(Literal::String(value.to_string()));
+        self.add_token(TokenType::String, literal)?;
         Ok(())
     }
 
