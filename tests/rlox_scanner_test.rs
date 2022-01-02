@@ -1,8 +1,6 @@
 use assert_cmd::Command;
 use predicates::str::contains;
 
-mod scanner;
-
 #[test]
 fn cli_too_many_args() {
     Command::cargo_bin("rlox")
