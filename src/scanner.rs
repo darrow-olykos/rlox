@@ -86,10 +86,13 @@ impl Scanner {
             '"' => self.consume_string_literal(),
             _ => match c.is_ascii_digit() {
                 true => self.consume_number_literal(),
-                false => Err(RloxError::SyntaxError(RloxSyntaxError {
-                    line_number: self.line,
-                    description: "Unexpected character.".to_string(),
-                })),
+                false => match c == '_' || c.is_alphabetic() {
+                    true => self.consume_identifier(),
+                    false => Err(RloxError::SyntaxError(RloxSyntaxError {
+                        line_number: self.line,
+                        description: "Unexpected character.".to_string(),
+                    })),
+                },
             },
         }?;
         Ok(())
@@ -186,6 +189,13 @@ impl Scanner {
             true => '\0',
             false => self.source.chars().nth(self.current + 1).unwrap(),
         }
+    }
+
+    fn consume_identifier(&mut self) -> Result<(), RloxError> {
+        while self.peek().is_alphanumeric() {
+            self.advance();
+        }
+        self.add_token(TokenType::Identifier, None)
     }
 }
 
