@@ -10,7 +10,7 @@ pub struct Scanner {
 }
 
 impl Scanner {
-    fn scan(source: String) -> Self {
+    pub fn new(source: String) -> Self {
         let mut s = Scanner {
             source,
             tokens: Vec::new(),
@@ -23,6 +23,10 @@ impl Scanner {
             Err(e) => panic!("{}", e),
         }
         s
+    }
+
+    pub fn get_tokens(&self) -> &Vec<Token> {
+        &self.tokens
     }
 
     fn scan_tokens(&mut self) -> Result<(), RloxError> {

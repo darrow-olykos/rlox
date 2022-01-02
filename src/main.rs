@@ -5,6 +5,8 @@ mod error;
 mod scanner;
 mod token;
 
+use scanner::Scanner;
+
 use crate::error::RloxError;
 fn main() -> Result<(), RloxError> {
     let args = env::args().skip(1).collect::<Vec<_>>();
@@ -27,8 +29,11 @@ fn run_file(file_path: &str) -> Result<(), RloxError> {
     run(&data)
 }
 
-fn run(data: &str) -> Result<(), RloxError> {
-    data.chars().for_each(|c| print!("{}", c));
+fn run(source: String) -> Result<(), RloxError> {
+    let scanner = Scanner::new(source);
+    for token in scanner.get_tokens() {
+        println!("{}", token);
+    }
     Ok(())
 }
 
@@ -41,6 +46,6 @@ fn run_repl() -> Result<(), RloxError> {
         if buffer == "exit" {
             break Ok(());
         }
-        let _result = run(&buffer);
+        let _result = run(buffer);
     }
 }
