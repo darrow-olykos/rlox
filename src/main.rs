@@ -26,7 +26,7 @@ pub fn execute(args: Vec<String>) -> Result<(), RloxError> {
 
 fn run_file(file_path: &str) -> Result<(), RloxError> {
     let data = fs::read_to_string(&file_path)?;
-    run(&data)
+    run(data)
 }
 
 fn run(source: String) -> Result<(), RloxError> {
