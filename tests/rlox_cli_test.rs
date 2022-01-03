@@ -26,15 +26,24 @@ fn cli_one_arg_with_valid_filepath() {
         .unwrap()
         .args(&["./tests/test_script.txt"])
         .assert()
-        .stdout(contains("print \"hello, world\";"))
+        .stdout(contains(
+"Print print
+String \"hello, world\"
+Semicolon ;
+Eof"))
         .success();
 }
 
 #[test]
+#[ignore]
 fn cli_no_arg() {
     Command::cargo_bin("rlox")
         .unwrap()
-        .write_stdin("hello\nexit")
+        .write_stdin("print \"hello, world\";")
         .assert()
-        .stdout(contains("> hello"));
+        .stdout(contains(
+"> Print print
+String \"hello, world\"
+Semicolon ;
+Eof"));
 }
