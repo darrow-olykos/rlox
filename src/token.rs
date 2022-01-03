@@ -1,9 +1,6 @@
-use std::{
-    collections::HashMap,
-    fmt::{self, Display},
-};
+use std::fmt::{self, Display};
 
-use crate::error::{RloxError, RloxSyntaxError};
+use crate::error::RloxError;
 
 #[derive(Debug)]
 pub(crate) enum Literal {

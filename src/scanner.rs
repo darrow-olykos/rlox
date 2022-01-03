@@ -1,5 +1,5 @@
 use crate::error::{RloxError, RloxSyntaxError};
-use crate::token::{Literal, Token, TokenType};
+use crate::token::{self, get_keyword_token_type, Literal, Token, TokenType};
 
 pub struct Scanner {
     source: String,
@@ -200,7 +200,11 @@ impl Scanner {
         while self.peek().is_alphanumeric() {
             self.advance();
         }
-        self.add_token(TokenType::Identifier, None)
+        let text = &self.source[self.start..self.current];
+        match get_keyword_token_type(text) {
+            Some(t) => self.add_token(t, None),
+            None => self.add_token(TokenType::Identifier, None),
+        }
     }
 }
 
