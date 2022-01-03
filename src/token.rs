@@ -2,13 +2,13 @@ use std::fmt::{self, Display};
 
 use crate::error::RloxError;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub(crate) enum Literal {
     String(String),
     Float(f32),
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Token {
     token_type: TokenType,
     lexeme: String,
@@ -38,7 +38,7 @@ impl Token {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub(crate) enum TokenType {
     // Single-character tokens.
     LeftParen,

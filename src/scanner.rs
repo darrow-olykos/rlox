@@ -197,7 +197,7 @@ impl Scanner {
     }
 
     fn consume_identifier(&mut self) -> Result<(), RloxError> {
-        while self.peek().is_alphanumeric() {
+        while self.peek().is_alphanumeric() || self.peek() == '_' {
             self.advance();
         }
         let text = &self.source[self.start..self.current];
@@ -210,8 +210,33 @@ impl Scanner {
 
 #[cfg(test)]
 mod tests {
+    use crate::token::{Literal, Token, TokenType};
+
+    use super::Scanner;
+
     #[test]
-    fn todo() {
-        assert_eq!(2 + 2, 4); // TODO
+    fn given_valid_input() {
+        let source = String::from("if(example_var){ print \"hi!\"; }");
+        let scanner = Scanner::new(source);
+        let received_tokens = scanner.get_tokens();
+        let expected_tokens = &vec![
+            Token::new(TokenType::If, "if".to_string(), None, 1).unwrap(),
+            Token::new(TokenType::LeftParen, "(".to_string(), None, 1).unwrap(),
+            Token::new(TokenType::Identifier, "example_var".to_string(), None, 1).unwrap(),
+            Token::new(TokenType::RightParen, ")".to_string(), None, 1).unwrap(),
+            Token::new(TokenType::LeftBrace, "{".to_string(), None, 1).unwrap(),
+            Token::new(TokenType::Print, "print".to_string(), None, 1).unwrap(),
+            Token::new(
+                TokenType::String,
+                "\"hi!\"".to_string(),
+                Some(Literal::String("hi!".to_string())),
+                1,
+            )
+            .unwrap(),
+            Token::new(TokenType::Semicolon, ";".to_string(), None, 1).unwrap(),
+            Token::new(TokenType::RightBrace, "}".to_string(), None, 1).unwrap(),
+            Token::new(TokenType::Eof, "".to_string(), None, 1).unwrap(),
+        ];
+        assert_eq!(expected_tokens, received_tokens);
     }
 }
