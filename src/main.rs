@@ -4,6 +4,7 @@ use std::fs;
 mod error;
 mod scanner;
 mod token;
+mod parser;
 
 use scanner::Scanner;
 
