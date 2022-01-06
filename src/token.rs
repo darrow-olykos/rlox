@@ -36,6 +36,9 @@ impl Token {
             line_number,
         })
     }
+    pub(crate) fn get_lexeme(&self) -> &str {
+        &self.lexeme
+    }
 }
 
 #[derive(Debug, Clone, PartialEq)]

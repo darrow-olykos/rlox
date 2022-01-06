@@ -5,6 +5,7 @@ mod error;
 mod scanner;
 mod token;
 mod parser;
+mod ast_printer;
 
 use scanner::Scanner;
 
