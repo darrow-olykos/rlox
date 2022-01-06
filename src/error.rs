@@ -1,15 +1,15 @@
 use std::fmt::{self, Display, Formatter};
 
 #[derive(Debug)]
-pub enum RloxError {
+pub(crate) enum RloxError {
     IoError(std::io::Error),
     SyntaxError(RloxSyntaxError),
 }
 
 #[derive(Debug)]
-pub struct RloxSyntaxError {
-    pub line_number: usize,
-    pub description: String,
+pub(crate) struct RloxSyntaxError {
+    pub(crate) line_number: usize,
+    pub(crate) description: String,
 }
 
 impl Display for RloxSyntaxError {

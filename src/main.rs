@@ -15,7 +15,7 @@ fn main() -> Result<(), RloxError> {
     execute(args)
 }
 
-pub fn execute(args: Vec<String>) -> Result<(), RloxError> {
+pub(crate) fn execute(args: Vec<String>) -> Result<(), RloxError> {
     match args.len() {
         l if l > 1 => {
             println!("Usage: rlox [script]");

@@ -9,7 +9,7 @@ pub(crate) enum Literal {
 }
 
 #[derive(Debug, PartialEq)]
-pub struct Token {
+pub(crate) struct Token {
     token_type: TokenType,
     lexeme: String,
     literal: Option<Literal>,

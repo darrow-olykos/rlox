@@ -1,7 +1,7 @@
 use crate::error::{RloxError, RloxSyntaxError};
 use crate::token::{self, get_keyword_token_type, Literal, Token, TokenType};
 
-pub struct Scanner {
+pub(crate) struct Scanner {
     source: String,
     tokens: Vec<Token>,
     start: usize,
@@ -10,7 +10,7 @@ pub struct Scanner {
 }
 
 impl Scanner {
-    pub fn new(source: String) -> Self {
+    pub(crate) fn new(source: String) -> Self {
         let mut s = Scanner {
             source,
             tokens: Vec::new(),
@@ -25,7 +25,7 @@ impl Scanner {
         s
     }
 
-    pub fn get_tokens(&self) -> &Vec<Token> {
+    pub(crate) fn get_tokens(&self) -> &Vec<Token> {
         &self.tokens
     }
 

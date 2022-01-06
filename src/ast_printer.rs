@@ -1,23 +1,34 @@
 use crate::parser::{BinaryExpr, Expr, ExprVisitor, GroupingExpr, LiteralExpr, UnaryExpr};
 
-struct AstPrinter {}
+pub(crate) struct AstPrinter {}
 
 impl AstPrinter {
-    fn print(&self, expr: Expr) -> String {
+    pub(crate) fn print(&self, expr: Expr) -> String {
         expr.accept::<String>(self).to_string()
+    }
+
+    fn parenthesize(&self, name: &str, expressions: &[&Expr]) -> String {
+        let mut s = format!("({}", name);
+        for expr in expressions {
+            s.push_str(" ");
+            s.push_str(&expr.accept::<String>(self));
+        }
+        s.push_str(")");
+
+        return s.to_string();
     }
 }
 
 impl ExprVisitor<String> for AstPrinter {
     fn visit_binary_expr(&self, expr: &BinaryExpr) -> String {
-        parenthesize(
+        self.parenthesize(
             &expr.get_operator().get_lexeme(),
             &[expr.get_lhs(), expr.get_rhs()],
         )
     }
 
     fn visit_grouping_expr(&self, expr: &GroupingExpr) -> String {
-        parenthesize("group", &[&expr.get_expression()])
+        self.parenthesize("group", &[&expr.get_expression()])
     }
 
     fn visit_literal_expr(&self, expr: &LiteralExpr) -> String {
@@ -29,10 +40,6 @@ impl ExprVisitor<String> for AstPrinter {
     }
 
     fn visit_unary_expr(&self, expr: &UnaryExpr) -> String {
-        parenthesize(expr.get_operator().get_lexeme(), &[&expr.get_rhs()])
+        self.parenthesize(expr.get_operator().get_lexeme(), &[&expr.get_rhs()])
     }
-}
-
-fn parenthesize(token: &str, expressions: &[&Expr]) -> String {
-    todo!()
 }
