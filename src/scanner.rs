@@ -25,7 +25,7 @@ impl Scanner {
         s
     }
 
-    pub(crate) fn get_tokens(&self) -> &Vec<Token> {
+    pub(crate) fn tokens(&self) -> &Vec<Token> {
         &self.tokens
     }
 
@@ -218,7 +218,7 @@ mod tests {
     fn given_valid_input() {
         let source = String::from("if(example_var){ print \"hi!\"; }");
         let scanner = Scanner::new(source);
-        let received_tokens = scanner.get_tokens();
+        let received_tokens = scanner.tokens();
         let expected_tokens = &vec![
             Token::new(TokenType::If, "if".to_string(), None, 1).unwrap(),
             Token::new(TokenType::LeftParen, "(".to_string(), None, 1).unwrap(),

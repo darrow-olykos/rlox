@@ -36,7 +36,7 @@ impl Token {
             line_number,
         })
     }
-    pub(crate) fn get_lexeme(&self) -> &str {
+    pub(crate) fn lexeme(&self) -> &str {
         &self.lexeme
     }
 }

@@ -33,7 +33,7 @@ fn run_file(file_path: &str) -> Result<(), RloxError> {
 
 fn run(source: String) -> Result<(), RloxError> {
     let scanner = Scanner::new(source);
-    for token in scanner.get_tokens() {
+    for token in scanner.tokens() {
         println!("{}", token);
     }
     Ok(())

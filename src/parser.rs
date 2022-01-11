@@ -35,15 +35,15 @@ pub(crate) struct BinaryExpr {
 }
 
 impl BinaryExpr {
-    pub(crate) fn get_operator(&self) -> &Token {
+    pub(crate) fn operator(&self) -> &Token {
         &self.operator
     }
 
-    pub(crate) fn get_lhs(&self) -> &Expr {
+    pub(crate) fn lhs(&self) -> &Expr {
         &self.lhs
     }
 
-    pub(crate) fn get_rhs(&self) -> &Expr {
+    pub(crate) fn rhs(&self) -> &Expr {
         &self.rhs
     }
 }
@@ -53,7 +53,7 @@ pub(crate) struct GroupingExpr {
 }
 
 impl GroupingExpr {
-    pub(crate) fn get_expression(&self) -> &Expr {
+    pub(crate) fn expression(&self) -> &Expr {
         &self.expression
     }
 }
@@ -70,10 +70,10 @@ pub(crate) struct UnaryExpr {
 }
 
 impl UnaryExpr {
-    pub(crate) fn get_operator(&self) -> &Token {
+    pub(crate) fn operator(&self) -> &Token {
         &self.operator
     }
-    pub(crate) fn get_rhs(&self) -> &Expr {
+    pub(crate) fn rhs(&self) -> &Expr {
         &self.rhs
     }
 }

@@ -21,14 +21,11 @@ impl AstPrinter {
 
 impl ExprVisitor<String> for AstPrinter {
     fn visit_binary_expr(&self, expr: &BinaryExpr) -> String {
-        self.parenthesize(
-            &expr.get_operator().get_lexeme(),
-            &[expr.get_lhs(), expr.get_rhs()],
-        )
+        self.parenthesize(&expr.operator().lexeme(), &[expr.lhs(), expr.rhs()])
     }
 
     fn visit_grouping_expr(&self, expr: &GroupingExpr) -> String {
-        self.parenthesize("group", &[&expr.get_expression()])
+        self.parenthesize("group", &[&expr.expression()])
     }
 
     fn visit_literal_expr(&self, expr: &LiteralExpr) -> String {
@@ -40,6 +37,6 @@ impl ExprVisitor<String> for AstPrinter {
     }
 
     fn visit_unary_expr(&self, expr: &UnaryExpr) -> String {
-        self.parenthesize(expr.get_operator().get_lexeme(), &[&expr.get_rhs()])
+        self.parenthesize(expr.operator().lexeme(), &[&expr.rhs()])
     }
 }
