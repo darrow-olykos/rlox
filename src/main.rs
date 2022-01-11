@@ -5,11 +5,12 @@ mod error;
 mod scanner;
 mod token;
 mod parser;
-mod ast_printer;
+mod ast_printer;     // example visitor impl
+mod ast_printer_rpn; // another example visitor impl
 
-use scanner::Scanner;
-
+use crate::scanner::Scanner;
 use crate::error::RloxError;
+
 fn main() -> Result<(), RloxError> {
     let args = env::args().skip(1).collect::<Vec<_>>();
     execute(args)

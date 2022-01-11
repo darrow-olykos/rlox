@@ -1,10 +1,12 @@
-use crate::token::Token;
+use std::rc::Rc;
 
-pub(crate) enum Expr {
-    Binary(Box<BinaryExpr>),
-    Grouping(Box<GroupingExpr>),
-    Literal(Box<LiteralExpr>),
-    Unary(Box<UnaryExpr>),
+use crate::token::{Literal, Token};
+
+pub enum Expr {
+    Binary(Rc<BinaryExpr>),
+    Grouping(Rc<GroupingExpr>),
+    Literal(Rc<LiteralExpr>),
+    Unary(Rc<UnaryExpr>),
 }
 
 impl Expr {
@@ -28,13 +30,18 @@ pub(crate) trait ExprVisitor<T> {
     fn visit_unary_expr(&self, expr: &UnaryExpr) -> T;
 }
 
-pub(crate) struct BinaryExpr {
+// enum + tuples is probably better for something like this
+pub struct BinaryExpr {
     operator: Token,
     lhs: Expr,
     rhs: Expr,
 }
 
 impl BinaryExpr {
+    pub fn new(operator: Token, lhs: Expr, rhs: Expr) -> Rc<Self> {
+        Rc::new(BinaryExpr { operator, lhs, rhs })
+    }
+
     pub(crate) fn operator(&self) -> &Token {
         &self.operator
     }
@@ -48,28 +55,42 @@ impl BinaryExpr {
     }
 }
 
-pub(crate) struct GroupingExpr {
+pub struct GroupingExpr {
     expression: Expr,
 }
 
 impl GroupingExpr {
+    pub fn new(expression: Expr) -> Rc<GroupingExpr> {
+        Rc::new(GroupingExpr { expression })
+    }
+
     pub(crate) fn expression(&self) -> &Expr {
         &self.expression
     }
 }
 
-pub(crate) enum LiteralExpr {
+pub enum LiteralExpr {
     Nil,
     String(String),
     Float(f32),
 }
 
-pub(crate) struct UnaryExpr {
+impl LiteralExpr {
+    pub fn new(e: LiteralExpr) -> Rc<Self> {
+        Rc::new(e)
+    }
+}
+
+pub struct UnaryExpr {
     operator: Token,
     rhs: Expr,
 }
 
 impl UnaryExpr {
+    pub fn new(operator: Token, rhs: Expr) -> Rc<Self> {
+        Rc::new(UnaryExpr { operator, rhs })
+    }
+
     pub(crate) fn operator(&self) -> &Token {
         &self.operator
     }
@@ -87,21 +108,5 @@ mod tests {
     };
 
     #[test]
-    fn given_valid_input() {
-        // -123 * (45.67)
-        let expr: Expr = Expr::Binary(Box::new(BinaryExpr {
-            lhs: Expr::Unary(Box::new(UnaryExpr {
-                operator: Token::new(TokenType::Minus, "-".to_string(), None, 1).unwrap(),
-                rhs: Expr::Literal(Box::new(LiteralExpr::Float(123.0))),
-            })),
-            operator: Token::new(TokenType::Star, "*".to_string(), None, 1).unwrap(),
-            rhs: Expr::Grouping(Box::new(GroupingExpr {
-                expression: Expr::Literal(Box::new(LiteralExpr::Float(45.67))),
-            })),
-        }));
-
-        let ast_printer = AstPrinter {};
-
-        assert_eq!(ast_printer.print(expr), "(* (- 123) (group 45.67))")
-    }
+    fn given_valid_input() {}
 }

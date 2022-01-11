@@ -1,35 +1,35 @@
 use crate::parser::{BinaryExpr, Expr, ExprVisitor, GroupingExpr, LiteralExpr, UnaryExpr};
 
-pub struct AstPrinter {}
+pub struct AstPrinterRpn {}
 
-impl AstPrinter {
+impl AstPrinterRpn {
     pub fn print(&self, expr: Expr) -> String {
         expr.accept::<String>(self).to_string()
     }
 
     pub fn default() -> Self {
-        AstPrinter {}
+        AstPrinterRpn {}
     }
 
-    fn parenthesize(&self, name: &str, expressions: &[&Expr]) -> String {
-        let mut s = format!("({}", name);
+    // reverse polish notation
+    fn format_in_rpn(&self, name: &str, expressions: &[&Expr]) -> String {
+        let mut s = String::from("");
         for expr in expressions {
-            s.push_str(" ");
             s.push_str(&expr.accept::<String>(self));
+            s.push_str(" ");
         }
-        s.push_str(")");
-
+        s.push_str(name);
         return s.to_string();
     }
 }
 
-impl ExprVisitor<String> for AstPrinter {
+impl ExprVisitor<String> for AstPrinterRpn {
     fn visit_binary_expr(&self, expr: &BinaryExpr) -> String {
-        self.parenthesize(&expr.operator().lexeme(), &[expr.lhs(), expr.rhs()])
+        self.format_in_rpn(&expr.operator().lexeme(), &[expr.lhs(), expr.rhs()])
     }
 
     fn visit_grouping_expr(&self, expr: &GroupingExpr) -> String {
-        self.parenthesize("group", &[&expr.expression()])
+        expr.expression().accept::<String>(self) // Don't format GroupingExpr, just visit the contained expr
     }
 
     fn visit_literal_expr(&self, expr: &LiteralExpr) -> String {
@@ -41,6 +41,6 @@ impl ExprVisitor<String> for AstPrinter {
     }
 
     fn visit_unary_expr(&self, expr: &UnaryExpr) -> String {
-        self.parenthesize(expr.operator().lexeme(), &[&expr.rhs()])
+        self.format_in_rpn(expr.operator().lexeme(), &[&expr.rhs()])
     }
 }
