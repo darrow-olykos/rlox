@@ -10,18 +10,18 @@ pub enum Expr {
 }
 
 impl Expr {
-    pub(crate) fn accept<T>(&self, visitor: &dyn ExprVisitor<T>) -> T {
-        visitor.visit(self)
+    pub(crate) fn accept<T>(&self, visitor: &dyn Visitor<T>) -> T {
+        visitor.visit_expr(self)
     }
 }
 
 /**
- * Any operation that can be performed on Expressions will impl ExprVisitor
+ * Any operation that can be performed on Expressions will impl Visitor
  *   Matching on Expr will force implementer to implement a match arm for every Expr variant that exists.
  *   Adding new Expr variances will conveniently raise syntax errors in existing implementations that do not provide match arms for those Expr variants.
  */
-pub(crate) trait ExprVisitor<T> {
-    fn visit(&self, expr: &Expr) -> T;
+pub(crate) trait Visitor<T> {
+    fn visit_expr(&self, expr: &Expr) -> T;
 }
 
 pub struct BinaryExpr {

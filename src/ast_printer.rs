@@ -1,9 +1,9 @@
-use crate::parser::{BinaryExpr, Expr, ExprVisitor, GroupingExpr, LiteralExpr, UnaryExpr};
+use crate::parser::{BinaryExpr, Expr, Visitor, GroupingExpr, LiteralExpr, UnaryExpr};
 
 pub struct AstPrinter {}
 
-impl ExprVisitor<String> for AstPrinter {
-    fn visit(&self, expr: &Expr) -> String {
+impl Visitor<String> for AstPrinter {
+    fn visit_expr(&self, expr: &Expr) -> String {
         match expr {
             Expr::Binary(expr) => self.visit_binary_expr(&expr),
             Expr::Grouping(expr) => self.visit_grouping_expr(&expr),
