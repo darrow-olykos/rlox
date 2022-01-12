@@ -98,14 +98,3 @@ impl UnaryExpr {
     }
 }
 
-#[cfg(test)]
-mod tests {
-    use crate::{
-        ast_printer::AstPrinter,
-        parser::{BinaryExpr, Expr, GroupingExpr, LiteralExpr, UnaryExpr},
-        token::{Token, TokenType},
-    };
-
-    #[test]
-    fn given_valid_input() {}
-}
