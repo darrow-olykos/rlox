@@ -1,5 +1,4 @@
 use std::rc::Rc;
-
 use rlox::ast_printer::AstPrinter;
 use rlox::ast_printer_rpn::AstPrinterRpn;
 use rlox::parser::{BinaryExpr, Expr, GroupingExpr, LiteralExpr, UnaryExpr};

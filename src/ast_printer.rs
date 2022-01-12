@@ -21,9 +21,7 @@ impl AstPrinter {
 
         return s.to_string();
     }
-}
 
-impl ExprVisitor<String> for AstPrinter {
     fn visit_binary_expr(&self, expr: &BinaryExpr) -> String {
         self.parenthesize(&expr.operator().lexeme(), &[expr.lhs(), expr.rhs()])
     }
@@ -42,5 +40,16 @@ impl ExprVisitor<String> for AstPrinter {
 
     fn visit_unary_expr(&self, expr: &UnaryExpr) -> String {
         self.parenthesize(expr.operator().lexeme(), &[&expr.rhs()])
+    }
+}
+
+impl ExprVisitor<String> for AstPrinter {
+    fn visit(&self, expr: &Expr) -> String {
+        match expr {
+            Expr::Binary(expr) => self.visit_binary_expr(&expr),
+            Expr::Grouping(expr) => self.visit_grouping_expr(&expr),
+            Expr::Literal(expr) => self.visit_literal_expr(&expr),
+            Expr::Unary(expr) => self.visit_unary_expr(&expr),
+        }
     }
 }

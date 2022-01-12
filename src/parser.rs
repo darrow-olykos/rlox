@@ -11,23 +11,16 @@ pub enum Expr {
 
 impl Expr {
     pub(crate) fn accept<T>(&self, visitor: &dyn ExprVisitor<T>) -> T {
-        match self {
-            Expr::Binary(e) => visitor.visit_binary_expr(&*e),
-            Expr::Grouping(e) => visitor.visit_grouping_expr(&*e),
-            Expr::Literal(e) => visitor.visit_literal_expr(&*e),
-            Expr::Unary(e) => visitor.visit_unary_expr(&*e),
-        }
+        visitor.visit(self)
     }
 }
 
 /**
  * Any operation that can be performed on Expressions will impl ExprVisitor
+ * (matching on Expr will force implementer to implement a match arm for every Expor variant that exists)
  */
 pub(crate) trait ExprVisitor<T> {
-    fn visit_binary_expr(&self, expr: &BinaryExpr) -> T;
-    fn visit_grouping_expr(&self, expr: &GroupingExpr) -> T;
-    fn visit_literal_expr(&self, expr: &LiteralExpr) -> T;
-    fn visit_unary_expr(&self, expr: &UnaryExpr) -> T;
+    fn visit(&self, expr: &Expr) -> T;
 }
 
 pub struct BinaryExpr {
@@ -97,4 +90,3 @@ impl UnaryExpr {
         &self.rhs
     }
 }
-
