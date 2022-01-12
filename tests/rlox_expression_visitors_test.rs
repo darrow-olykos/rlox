@@ -8,16 +8,14 @@ use rlox::token::{Token, TokenType};
 #[test]
 fn ast_printer_prints_in_lisp_like_format() {
     // -123 * (45.67)
-    let expr: Expr = Expr::Binary(BinaryExpr::new(
+    let expr = BinaryExpr::new(
         Token::new(TokenType::Star, "*".to_string(), None, 1).unwrap(),
-        Expr::Unary(UnaryExpr::new(
+        UnaryExpr::new(
             Token::new(TokenType::Minus, "-".to_string(), None, 1).unwrap(),
-            Expr::Literal(LiteralExpr::new(LiteralExpr::Float(123.0))),
-        )),
-        Expr::Grouping(GroupingExpr::new(Expr::Literal(LiteralExpr::new(
-            LiteralExpr::Float(45.67),
-        )))),
-    ));
+            LiteralExpr::new(LiteralExpr::Float(123.0)),
+        ),
+        GroupingExpr::new(LiteralExpr::new(LiteralExpr::Float(45.67))),
+    );
 
     let printer = AstPrinter::default();
 
@@ -27,25 +25,40 @@ fn ast_printer_prints_in_lisp_like_format() {
 #[test]
 fn ast_printer_rpn_prints_in_reverse_polish_notation() {
     //  "-123 * (45.67)" which is "123 - 45.67 *" in reverse polish notation
-    let expr: Expr = Expr::Binary(BinaryExpr::new(
+    let expr = BinaryExpr::new(
         Token::new(TokenType::Star, "*".to_string(), None, 1).unwrap(),
-        Expr::Unary(UnaryExpr::new(
+        UnaryExpr::new(
             Token::new(TokenType::Minus, "-".to_string(), None, 1).unwrap(),
-            Expr::Literal(LiteralExpr::new(LiteralExpr::Float(123.0))),
-        )),
-        Expr::Grouping(GroupingExpr::new(Expr::Literal(LiteralExpr::new(
-            LiteralExpr::Float(45.67),
-        )))),
-    ));
+            LiteralExpr::new(LiteralExpr::Float(123.0)),
+        ),
+        GroupingExpr::new(LiteralExpr::new(LiteralExpr::Float(45.67))),
+    );
 
     let printer = AstPrinterRpn::default();
 
     assert_eq!(printer.print(expr), "123 - 45.67 *");
 }
 
-#[ignore]
 #[test]
 fn ast_printer_rpn_prints_in_reverse_polish_notation_2() {
-    //  "(1 + 2) * (4 - 3)" which is "1 2 + 4 3 - *" in reverse polish notation
-    todo!()
+    //  "(1 + 2) * (4 - 3)" is "1 2 + 4 3 - *" in reverse polish notation
+    let expr = BinaryExpr::new(
+        Token::new(TokenType::Star, "*".to_string(), None, 1).unwrap(),
+        GroupingExpr::new(
+        BinaryExpr::new(
+            Token::new(TokenType::Plus, "+".to_string(), None, 1).unwrap(),
+            LiteralExpr::new(LiteralExpr::Float(1.0)),
+            LiteralExpr::new(LiteralExpr::Float(2.0))
+        )),
+        GroupingExpr::new(
+            BinaryExpr::new(
+                Token::new(TokenType::Minus, "-".to_string(), None, 1).unwrap(),
+                LiteralExpr::new(LiteralExpr::Float(4.0)),
+                LiteralExpr::new(LiteralExpr::Float(3.0))
+            ))
+        );
+
+        let printer = AstPrinterRpn::default();
+
+        assert_eq!(printer.print(expr), "1 2 + 4 3 - *")
 }

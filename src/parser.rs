@@ -37,8 +37,8 @@ pub struct BinaryExpr {
 }
 
 impl BinaryExpr {
-    pub fn new(operator: Token, lhs: Expr, rhs: Expr) -> Rc<Self> {
-        Rc::new(BinaryExpr { operator, lhs, rhs })
+    pub fn new(operator: Token, lhs: Expr, rhs: Expr) -> Expr {
+        Expr::Binary(Rc::new(BinaryExpr { operator, lhs, rhs }))
     }
 
     pub(crate) fn operator(&self) -> &Token {
@@ -59,8 +59,8 @@ pub struct GroupingExpr {
 }
 
 impl GroupingExpr {
-    pub fn new(expression: Expr) -> Rc<GroupingExpr> {
-        Rc::new(GroupingExpr { expression })
+    pub fn new(expression: Expr) -> Expr {
+        Expr::Grouping(Rc::new(GroupingExpr { expression }))
     }
 
     pub(crate) fn expression(&self) -> &Expr {
@@ -75,8 +75,8 @@ pub enum LiteralExpr {
 }
 
 impl LiteralExpr {
-    pub fn new(e: LiteralExpr) -> Rc<Self> {
-        Rc::new(e)
+    pub fn new(e: LiteralExpr) -> Expr {
+        Expr::Literal(Rc::new(e))
     }
 }
 
@@ -86,8 +86,8 @@ pub struct UnaryExpr {
 }
 
 impl UnaryExpr {
-    pub fn new(operator: Token, rhs: Expr) -> Rc<Self> {
-        Rc::new(UnaryExpr { operator, rhs })
+    pub fn new(operator: Token, rhs: Expr) -> Expr {
+        Expr::Unary(Rc::new(UnaryExpr { operator, rhs }))
     }
 
     pub(crate) fn operator(&self) -> &Token {
