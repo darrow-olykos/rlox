@@ -43,6 +43,7 @@ fn ast_printer_rpn_prints_in_reverse_polish_notation() {
     assert_eq!(printer.print(expr), "123 - 45.67 *");
 }
 
+#[ignore]
 #[test]
 fn ast_printer_rpn_prints_in_reverse_polish_notation_2() {
     //  "(1 + 2) * (4 - 3)" which is "1 2 + 4 3 - *" in reverse polish notation

@@ -30,7 +30,6 @@ pub(crate) trait ExprVisitor<T> {
     fn visit_unary_expr(&self, expr: &UnaryExpr) -> T;
 }
 
-// enum + tuples is probably better for something like this
 pub struct BinaryExpr {
     operator: Token,
     lhs: Expr,
