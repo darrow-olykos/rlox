@@ -18,7 +18,7 @@ impl Expr {
 /**
  * Any operation that can be performed on Expressions will impl ExprVisitor
  *   Matching on Expr will force implementer to implement a match arm for every Expr variant that exists.
- *   Adding new Expr variances will convenient raise syntax errors in existing implementations that do not provide match arms for those Expr variants.
+ *   Adding new Expr variances will conveniently raise syntax errors in existing implementations that do not provide match arms for those Expr variants.
  */
 pub(crate) trait ExprVisitor<T> {
     fn visit(&self, expr: &Expr) -> T;
