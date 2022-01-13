@@ -1,6 +1,6 @@
 use crate::parser::{BinaryExpr, Expr, Visitor, GroupingExpr, LiteralExpr, UnaryExpr};
 
-pub struct AstPrinter {}
+pub struct AstPrinter;
 
 impl Visitor<String> for AstPrinter {
     fn visit_expr(&self, expr: &Expr) -> String {
