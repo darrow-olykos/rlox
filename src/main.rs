@@ -4,6 +4,7 @@ use std::fs;
 mod error;
 mod scanner;
 mod token;
+mod expr;
 mod parser;
 mod ast_printer;     // example visitor impl
 mod ast_printer_rpn; // another example visitor impl

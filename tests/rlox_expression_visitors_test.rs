@@ -1,6 +1,6 @@
 use rlox::ast_printer::AstPrinter;
 use rlox::ast_printer_rpn::AstPrinterRpn;
-use rlox::parser::{BinaryExpr, GroupingExpr, LiteralExpr, UnaryExpr};
+use rlox::expr::{BinaryExpr, GroupingExpr, LiteralExpr, UnaryExpr};
 use rlox::token::{Token, TokenType};
 
 #[test]

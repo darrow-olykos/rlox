@@ -1,93 +1,63 @@
-use std::rc::Rc;
+use crate::expr::{BinaryExpr, Expr};
+use crate::token::{Token, TokenType};
 
-use crate::token::{Literal, Token};
-
-pub enum Expr {
-    Binary(Rc<BinaryExpr>),
-    Grouping(Rc<GroupingExpr>),
-    Literal(Rc<LiteralExpr>),
-    Unary(Rc<UnaryExpr>),
+pub struct Parser {
+    tokens: Vec<Token>,
+    current: usize,
 }
 
-impl Expr {
-    pub(crate) fn accept<T>(&self, visitor: &dyn Visitor<T>) -> T {
-        visitor.visit_expr(self)
-    }
-}
-
-/**
- * Any operation that can be performed on Expressions will impl Visitor
- *   Matching on Expr will force implementer to implement a match arm for every Expr variant that exists.
- *   Adding new Expr variances will conveniently raise syntax errors in existing implementations that do not provide match arms for those Expr variants.
- */
-pub(crate) trait Visitor<T> {
-    fn visit_expr(&self, expr: &Expr) -> T;
-}
-
-pub struct BinaryExpr {
-    operator: Token,
-    lhs: Expr,
-    rhs: Expr,
-}
-
-impl BinaryExpr {
-    pub fn new(operator: Token, lhs: Expr, rhs: Expr) -> Expr {
-        Expr::Binary(Rc::new(BinaryExpr { operator, lhs, rhs }))
+impl Parser {
+    // expression --> equality ;
+    fn expression(&self) -> Expr {
+        self.equality()
     }
 
-    pub(crate) fn operator(&self) -> &Token {
-        &self.operator
+    // equality --> comparison ( ( "!=" | "==" ) comparison )* ;
+    fn equality(&self) -> Expr {
+        let mut expr = self.comparison();
+        while self.advance_if_match(&[&TokenType::BangEqual, &TokenType::Equal]) {
+            let operator = self.previous();
+            let rhs = self.comparison();
+            expr = BinaryExpr::new(operator, expr, rhs)
+        }
+        expr
     }
 
-    pub(crate) fn lhs(&self) -> &Expr {
-        &self.lhs
+    //
+    fn comparison(&self) -> Expr {
+        todo!()
     }
 
-    pub(crate) fn rhs(&self) -> &Expr {
-        &self.rhs
-    }
-}
-
-pub struct GroupingExpr {
-    expression: Expr,
-}
-
-impl GroupingExpr {
-    pub fn new(expression: Expr) -> Expr {
-        Expr::Grouping(Rc::new(GroupingExpr { expression }))
+    fn advance_if_match(&self, token_types: &[&TokenType]) -> bool {
+        for token in &self.tokens {
+            if self.check(&token) {
+                self.advance();
+                return true;
+            }
+        }
+        false
     }
 
-    pub(crate) fn expression(&self) -> &Expr {
-        &self.expression
-    }
-}
-
-pub enum LiteralExpr {
-    Nil,
-    String(String),
-    Float(f32),
-}
-
-impl LiteralExpr {
-    pub fn new(e: LiteralExpr) -> Expr {
-        Expr::Literal(Rc::new(e))
-    }
-}
-
-pub struct UnaryExpr {
-    operator: Token,
-    rhs: Expr,
-}
-
-impl UnaryExpr {
-    pub fn new(operator: Token, rhs: Expr) -> Expr {
-        Expr::Unary(Rc::new(UnaryExpr { operator, rhs }))
+    fn previous(&self) -> Token {
+        todo!()
     }
 
-    pub(crate) fn operator(&self) -> &Token {
-        &self.operator
+    fn advance(&self) {
+        todo!()
     }
-    pub(crate) fn rhs(&self) -> &Expr {
-        &self.rhs
+
+    fn check(&self, token: &Token) -> bool {
+        if self.is_at_end() {
+            return false;
+        }
+        self.peek().token_type() == token.token_type()
+    }
+
+    fn is_at_end(&self) -> bool {
+        todo!()
+    }
+
+    fn peek(&self) -> Token {
+        todo!()
     }
 }

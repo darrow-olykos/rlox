@@ -36,7 +36,10 @@ impl Token {
             line_number,
         })
     }
-    pub(crate) fn lexeme(&self) -> &str {
+    pub fn token_type(&self) -> &TokenType {
+        &self.token_type
+    }
+    pub fn lexeme(&self) -> &str {
         &self.lexeme
     }
 }

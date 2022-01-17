@@ -1,5 +1,5 @@
 use crate::error::{RloxError, RloxSyntaxError};
-use crate::token::{self, get_keyword_token_type, Literal, Token, TokenType};
+use crate::token::{get_keyword_token_type, Literal, Token, TokenType};
 
 pub(crate) struct Scanner {
     source: String,
