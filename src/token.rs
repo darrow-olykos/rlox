@@ -2,13 +2,13 @@ use std::fmt::{self, Display};
 
 use crate::error::RloxError;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum Literal {
     String(String),
     Float(f32),
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Token {
     token_type: TokenType,
     lexeme: String,
@@ -41,6 +41,9 @@ impl Token {
     }
     pub fn lexeme(&self) -> &str {
         &self.lexeme
+    }
+    pub fn literal(&self) -> &Option<Literal> {
+        &self.literal
     }
 }
 

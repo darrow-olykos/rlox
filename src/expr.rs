@@ -2,6 +2,7 @@ use std::rc::Rc;
 
 use crate::token::{Literal, Token};
 
+#[derive(Clone)]
 pub enum Expr {
     Binary(Rc<BinaryExpr>),
     Grouping(Rc<GroupingExpr>),
@@ -66,6 +67,7 @@ pub enum LiteralExpr {
     Nil,
     String(String),
     Float(f32),
+    Bool(bool)
 }
 
 impl LiteralExpr {

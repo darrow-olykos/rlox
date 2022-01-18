@@ -46,6 +46,7 @@ impl AstPrinterRpn {
             LiteralExpr::Nil => "nil".to_string(),
             LiteralExpr::String(s) => s.to_string(),
             LiteralExpr::Float(f) => f.to_string(),
+            LiteralExpr::Bool(b) => b.to_string(),
         }
     }
 
