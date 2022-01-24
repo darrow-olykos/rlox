@@ -6,9 +6,13 @@ pub struct Parser {
     current: usize,
 }
 
+enum ParseError {
+    // TODO
+}
+
 impl Parser {
     pub fn parse(&self) -> Result<Expr, String> {
-        self.expression()
+        self.expression() // TODO
     }
 
     // expression --> equality ;
