@@ -7,6 +7,10 @@ pub struct Parser {
 }
 
 impl Parser {
+    pub fn parse(&self) -> Result<Expr, String> {
+        self.expression()
+    }
+
     // expression --> equality ;
     fn expression(&mut self) -> Expr {
         self.equality()
@@ -43,7 +47,7 @@ impl Parser {
 
     fn advance_if_match(&mut self, token_types: &[&TokenType]) -> bool {
         for token in &self.tokens {
-            if self.check(&token) {
+            if self.is_current_token_type(&token.token_type()) {
                 self.advance();
                 return true;
             }
@@ -62,11 +66,11 @@ impl Parser {
         self.previous()
     }
 
-    fn check(&self, token: &Token) -> bool {
+    fn is_current_token_type(&self, token_type: &TokenType) -> bool {
         if self.is_at_end() {
             return false;
         }
-        self.peek().token_type() == token.token_type()
+        self.peek().token_type() == token_type
     }
 
     fn is_at_end(&self) -> bool {
@@ -128,15 +132,56 @@ impl Parser {
             }
         } else if self.advance_if_match(&[&TokenType::LeftParen]) {
             let expr = self.expression();
-            self.consume(TokenType::RightParen, "Expect ')' after expression.");
+            self.consume(&TokenType::RightParen, "Expect ')' after expression.");
             GroupingExpr::new(expr)
         }
         else {
+            self.error(self.peek(), "Expect expression.");
             panic!("Something went wrong. Unable to parse Primary expression.")
         }
     }
 
-    fn consume(&self, token_type: TokenType, msg: &str) {
-        todo!()
+    fn consume(&mut self, token_type: &TokenType, msg: &str) -> &Token {
+        if self.is_current_token_type(token_type) {
+            return self.advance()
+        }
+        else {
+            self.error(self.peek(), msg);
+            panic!("{} {}", self.peek(), msg);
+        }
+    }
+
+    fn error(&self, token: &Token, msg: &str) {
+        if token.token_type() == &TokenType::Eof {
+            println!("{} at end. {}", token.line_number(), msg)
+        }
+        else {
+            println!("{} at '{}' {}", token.line_number(), token.lexeme(), msg)
+        }
+    }
+
+    fn synchronize(&mut self) {
+        self.advance();
+
+        while !self.is_at_end() {
+            if self.previous().token_type() == &TokenType::Semicolon {
+                return;
+            }
+
+            match self.peek().token_type() {
+                TokenType::Class
+                    | TokenType::Fun
+                    | TokenType::Var
+                    | TokenType::For
+                    | TokenType::If
+                    | TokenType::While
+                    | TokenType::Print
+                    | TokenType::Return
+                        => return,
+                _ => ()
+            }
+
+            self.advance();
+        }
     }
 }

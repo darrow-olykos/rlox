@@ -45,6 +45,9 @@ impl Token {
     pub fn literal(&self) -> &Option<Literal> {
         &self.literal
     }
+    pub fn line_number(&self) -> &usize {
+        &self.line_number
+    }
 }
 
 #[derive(Debug, Clone, PartialEq)]
